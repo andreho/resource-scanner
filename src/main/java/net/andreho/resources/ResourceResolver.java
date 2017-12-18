@@ -33,7 +33,7 @@ public interface ResourceResolver {
    * @param resourceResolvers to use
    * @return a resource resolution strategy
    */
-  static ResourceResolver with(ResourceResolver... resourceResolvers) {
+  static ResourceResolver resolversList(ResourceResolver... resourceResolvers) {
     return new ResourceResolverPipelineImpl(resourceResolvers);
   }
 
@@ -43,7 +43,7 @@ public interface ResourceResolver {
    * @param resourceResolvers to use
    * @return a resource resolution strategy
    */
-  static ResourceResolver with(Collection<ResourceResolver> resourceResolvers) {
+  static ResourceResolver resolversList(Collection<ResourceResolver> resourceResolvers) {
     return new ResourceResolverPipelineImpl(resourceResolvers);
   }
 

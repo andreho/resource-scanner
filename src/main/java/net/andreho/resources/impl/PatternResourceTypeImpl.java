@@ -16,6 +16,9 @@ public class PatternResourceTypeImpl
   public PatternResourceTypeImpl(String name,
                                  String... patterns) {
     super(name);
+    if(patterns == null || patterns.length == 0) {
+      throw new IllegalArgumentException("Invalid patterns' array.");
+    }
     this.patterns = new Pattern[patterns.length];
     for (int i = 0; i < patterns.length; i++) {
       this.patterns[i] = Pattern.compile(patterns[i]);

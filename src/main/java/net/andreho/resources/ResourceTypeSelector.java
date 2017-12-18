@@ -8,7 +8,6 @@ import java.util.Collection;
  * Created by a.hofmann on 13.05.2016.
  */
 public interface ResourceTypeSelector {
-
   /**
    * @return known resource types
    */
@@ -17,8 +16,8 @@ public interface ResourceTypeSelector {
   /**
    * Selects best suitable resource type from known types for the given resource name
    *
-   * @param resourceName to analyze
-   * @return a best suitable resource type
+   * @param resourceName to check
+   * @return a best suitable resource type or {@link ResourceType#UNKNOWN_TYPE unknown type}
    * @see ResourceType
    */
   ResourceType select(String resourceName);
@@ -29,7 +28,7 @@ public interface ResourceTypeSelector {
    * @param resourceTypes to use
    * @return a best suitable resource type from given resource types
    */
-  static ResourceTypeSelector with(ResourceType... resourceTypes) {
+  static ResourceTypeSelector selectorsList(ResourceType... resourceTypes) {
     return new ResourceTypeSelectorImpl(resourceTypes);
   }
 
@@ -39,7 +38,7 @@ public interface ResourceTypeSelector {
    * @param resourceTypes to use
    * @return a best suitable resource type from given resource types
    */
-  static ResourceTypeSelector with(Collection<ResourceType> resourceTypes) {
+  static ResourceTypeSelector selectorsList(Collection<ResourceType> resourceTypes) {
     return new ResourceTypeSelectorImpl(resourceTypes);
   }
 }

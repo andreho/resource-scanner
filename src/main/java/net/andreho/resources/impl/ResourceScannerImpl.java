@@ -46,7 +46,7 @@ public class ResourceScannerImpl
          resourceSourceLocator,
          resourceResolver,
          resourceFilter,
-         ResourceTypeSelector.with(resourceTypes)
+         ResourceTypeSelector.selectorsList(resourceTypes)
     );
   }
 

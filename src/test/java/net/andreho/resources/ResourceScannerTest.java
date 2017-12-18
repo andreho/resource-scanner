@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
 
+import static net.andreho.resources.ResourceResolver.resolversList;
+import static net.andreho.resources.ResourceScanner.Parallelism.CONCURRENT;
+import static net.andreho.resources.ResourceSourceLocator.locatorsList;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -58,12 +61,12 @@ public class ResourceScannerTest {
 
   private ResourceScanner createResourceScanner() {
     return ResourceScanner.newScanner(
-        ResourceScanner.Parallelism.CONCURRENT,
-        ResourceSourceLocator.locatorsList(
+        CONCURRENT,
+        locatorsList(
             ClassLoaderResourceLocatorImpl.INSTANCE,
             ClassPathResourceLocatorImpl.INSTANCE
         ),
-        ResourceResolver.with(new FileResourceResolverImpl(), new JarResourceResolverImpl()),
+        resolversList(new FileResourceResolverImpl(), new JarResourceResolverImpl()),
         (resourceName, streamSupplier) ->
           resourceName.startsWith(RESOURCE_PREFIX),
         ResourceType.CLASS_TYPE);

@@ -10,26 +10,26 @@ import java.util.function.Function;
  */
 public interface ResourceType {
 
-  ResourceType JAVA_TYPE = fromPatterns("*.java", ".*\\.(?i)java");
+  ResourceType JAVA_TYPE = newTypeByPatterns("*.java", ".*\\.(?i)java");
 
-  ResourceType CLASS_TYPE = fromPatterns("*.class", ".*\\.(?i)class");
+  ResourceType CLASS_TYPE = newTypeByPatterns("*.class", ".*\\.(?i)class");
 
-  ResourceType PROPERTIES_TYPE = fromPatterns("*.properties", ".*\\.(?i)properties");
+  ResourceType PROPERTIES_TYPE = newTypeByPatterns("*.properties", ".*\\.(?i)properties");
 
-  ResourceType XML_TYPE = fromPatterns("*.xml", ".*\\.(?i)xml");
+  ResourceType XML_TYPE = newTypeByPatterns("*.xml", ".*\\.(?i)xml");
 
-  ResourceType XSD_TYPE = fromPatterns("*.xsd", ".*\\.(?i)xsd");
+  ResourceType XSD_TYPE = newTypeByPatterns("*.xsd", ".*\\.(?i)xsd");
 
-  ResourceType JSON_TYPE = fromPatterns("*.json", ".*\\.(?i)json");
+  ResourceType JSON_TYPE = newTypeByPatterns("*.json", ".*\\.(?i)json");
 
-  ResourceType YAML_TYPE = fromPatterns("*.yml", ".*\\.(?i)yml");
+  ResourceType YAML_TYPE = newTypeByPatterns("*.yml", ".*\\.(?i)yml");
 
-  ResourceType SQL_TYPE = fromPatterns("*.sql", ".*\\.(?i)sql");
+  ResourceType SQL_TYPE = newTypeByPatterns("*.sql", ".*\\.(?i)sql");
 
-  ResourceType SERVICE_DECLARATION_TYPE = fromPatterns("/META-INF/services/*",
-                                                                      "\\/META-INF\\/services\\/[\\w].+");
+  ResourceType SERVICE_DECLARATION_TYPE = newTypeByPatterns("/META-INF/services/*",
+                                                            "\\/META-INF\\/services\\/[\\w].+");
 
-  ResourceType UNKNOWN_TYPE = fromDelegate("*", (name) -> true);
+  ResourceType UNKNOWN_TYPE = newTypeByDelegate("*", (name) -> true);
 
   /**
    * @return name of this resource type
@@ -49,7 +49,7 @@ public interface ResourceType {
    * @param patterns
    * @return
    */
-  static ResourceType fromPatterns(String name, String ... patterns) {
+  static ResourceType newTypeByPatterns(String name, String ... patterns) {
     return new PatternResourceTypeImpl(name, patterns);
   }
 
@@ -58,7 +58,7 @@ public interface ResourceType {
    * @param delegate
    * @return
    */
-  static ResourceType fromDelegate(String name, Function<String, Boolean> delegate) {
+  static ResourceType newTypeByDelegate(String name, Function<String, Boolean> delegate) {
     return new DelegatingResourceTypeImpl(name, delegate);
   }
 }

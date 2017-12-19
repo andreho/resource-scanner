@@ -5,6 +5,7 @@ import net.andreho.resources.impl.ResourceScannerImpl;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -42,10 +43,25 @@ public interface ResourceScanner {
   ResourceFilter getResourceFilter();
 
   /**
-   * @param classLoader to scan
+   * Scans defined resources using given classloader and other settings
+   * @param classLoader to use for scanning
+   * @return a map where keys are fully qualified resource names and values are their representatives
    */
   Map<String, Resource> scan(ClassLoader classLoader)
   throws IOException, URISyntaxException, ExecutionException, InterruptedException;
+
+  /**
+   * Scans defined resources using given settings
+   * @return a map where keys are fully qualified resource names and values are their representatives
+   * @throws IOException
+   * @throws URISyntaxException
+   * @throws ExecutionException
+   * @throws InterruptedException
+   */
+  default Map<String, Resource> scan()
+  throws IOException, URISyntaxException, ExecutionException, InterruptedException {
+    return scan(getClass().getClassLoader());
+  }
 
   /**
    * Creates default resource type implementation

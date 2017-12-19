@@ -16,6 +16,8 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
+defaultTasks 'clean', 'build', 'test', 'install'
+
 sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
 targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -36,10 +38,11 @@ dependencies {
   testCompile "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
   testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
   testCompile "org.junit.vintage:junit-vintage-engine:$junitVintageVersion"
-  testCompile "org.assertj:assertj-core:$assertjVersion"  
-}
+  testCompile "org.assertj:assertj-core:$assertjVersion"
 
-defaultTasks 'clean', 'build', 'test', 'install'
+  //For test only
+  testCompile 'org.hibernate:hibernate-core:5.2.12.Final'
+}
 
 task sourceJar(type: Jar) {
   from sourceSets.main.allJava

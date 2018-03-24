@@ -14,7 +14,7 @@ import java.net.URL;
  * Created by a.hofmann on 27.07.2016.
  */
 public abstract class AbstractByteArrayResource
-    extends AbstractResource<byte[]> {
+    extends AbstractResource {
 
   private static final int MAX_CACHEABLE_BYTES = Integer.MAX_VALUE - 8;
   private static final int READ_BUFFER_LENGTH = 2048;

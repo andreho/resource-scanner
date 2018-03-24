@@ -13,6 +13,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,12 +29,12 @@ public class FileResourceResolverImpl extends AbstractResourceResolver {
   private static final String FILE_PROTOCOL_NAME = "file";
 
   @Override
-  public Optional<Map<String, Resource>> resolve(final URL url,
-                                                 final ResourceFilter resourceFilter,
-                                                 final ResourceTypeSelector typeSelector) {
+  public Map<String, Resource> resolve(final URL url,
+                                       final ResourceFilter resourceFilter,
+                                       final ResourceTypeSelector typeSelector) {
 
     if (!FILE_PROTOCOL_NAME.equalsIgnoreCase(url.getProtocol())) {
-      return Optional.empty();
+      return Collections.emptyMap();
     }
 
     try {
@@ -46,27 +47,26 @@ public class FileResourceResolverImpl extends AbstractResourceResolver {
     }
   }
 
-  protected Optional<Map<String, Resource>> scan(final URL url,
-                                                 final File file,
-                                                 final ResourceFilter resourceFilter,
-                                                 final ResourceTypeSelector typeSelector)
+  protected Map<String, Resource> scan(final URL url,
+                                       final File file,
+                                       final ResourceFilter resourceFilter,
+                                       final ResourceTypeSelector typeSelector)
   throws IOException {
     if (!file.exists()) {
-      return Optional.empty();
+      return Collections.emptyMap();
     }
 
     final Path targetPath = file.toPath();
     final Map<String, Resource> result = new LinkedHashMap<>();
 
     Files.walkFileTree(targetPath,
-                       new FileResourcePathVisitor(
-                         this, url, targetPath, resourceFilter, typeSelector, result));
+                       new FileResourcePathVisitor(this, url, targetPath, resourceFilter, typeSelector, result));
 
     if(isSubJar(url, file.getName())) {
       mergeResults(result, scanSubJar(url, file, resourceFilter, typeSelector));
     }
 
-    return Optional.of(result);
+    return Collections.unmodifiableMap(result);
   }
 
   protected boolean filterFile(final Path file,
@@ -87,6 +87,7 @@ public class FileResourceResolverImpl extends AbstractResourceResolver {
                                     final String resourceName,
                                     final File target,
                                     final ResourceTypeSelector typeSelector) {
+
     final ResourceType resourceType = typeSelector.select(resourceName);
     return new FileResourceImpl(url, resourceName, resourceType, target);
   }

@@ -18,8 +18,8 @@ public abstract class Utils {
    * @param result
    * @param other
    */
-  public static void mergeResults(final Map<String, Resource> result,
-                                  final Map<String, Resource> other) {
+  static void mergeResults(final Map<String, Resource> result, final Map<String, Resource> other) {
+
     for (final Map.Entry<String, Resource> entry : other.entrySet()) {
       final String key = entry.getKey();
       final Resource value = entry.getValue();
@@ -36,10 +36,12 @@ public abstract class Utils {
    * @param suffix
    * @return
    */
-  public static boolean endsWithCaseInsensitive(String str, String suffix) {
+  public static boolean endsWithCaseInsensitive(final String str, final String suffix) {
+
     if(str.length() < suffix.length()) {
       return false;
     }
+
     for(int j = 0, i = str.length() - suffix.length(), len = str.length(); i < len; j++, i++) {
       char a = str.charAt(i);
       char b = suffix.charAt(j);

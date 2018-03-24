@@ -42,7 +42,7 @@ class FileResourcePathVisitor implements FileVisitor<Path> {
   }
 
   @Override
-  public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
+  public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
     if (!target.equals(dir)) {
       stack.append(dir.getFileName().toString()).append('/');
     }
@@ -50,7 +50,7 @@ class FileResourcePathVisitor implements FileVisitor<Path> {
   }
 
   @Override
-  public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+  public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) {
     if (!target.equals(dir)) {
       stack.setLength(stack.length() - (dir.getFileName().toString().length() + 1));
     }
@@ -58,7 +58,7 @@ class FileResourcePathVisitor implements FileVisitor<Path> {
   }
 
   @Override
-  public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+  public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)  {
     final String fileName = file.getFileName().toString();
     final StringBuilder stack = this.stack;
 

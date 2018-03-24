@@ -8,15 +8,12 @@ import net.andreho.resources.ResourceSourceLocator;
 import net.andreho.resources.ResourceType;
 import net.andreho.resources.ResourceTypeSelector;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -90,7 +87,7 @@ public class ResourceScannerImpl
 
   @Override
   public Map<String, Resource> scan(final ClassLoader classLoader)
-  throws IOException, URISyntaxException, ExecutionException, InterruptedException {
+  throws ExecutionException, InterruptedException {
     return scanResourceSources(getResourceSourceLocator().locateResources(classLoader));
   }
 
@@ -99,8 +96,8 @@ public class ResourceScannerImpl
   }
 
   protected Map<String, Resource> scanResourceSources(final Collection<URL> resourceSources)
-  throws URISyntaxException, IOException, ExecutionException, InterruptedException {
-    final List<Future<Optional<Map<String, Resource>>>> pendingList = new ArrayList<>(resourceSources.size());
+  throws ExecutionException, InterruptedException {
+    final List<Future<Map<String, Resource>>> pendingList = new ArrayList<>(resourceSources.size());
 
     for (URL url : resourceSources) {
       pendingList.add(scanResourceSource(url));
@@ -108,15 +105,15 @@ public class ResourceScannerImpl
 
     final Map<String, Resource> resultMap = createResultMap();
 
-    for (Future<Optional<Map<String, Resource>>> future : pendingList) {
-      final Optional<Map<String, Resource>> optional = future.get();
-      optional.ifPresent((resourceMap -> mergeResults(resultMap, resourceMap)));
+    for (Future<Map<String, Resource>> future : pendingList) {
+      final Map<String, Resource> resourceMap = future.get();
+      mergeResults(resultMap, resourceMap);
     }
 
     return resultMap;
   }
 
-  protected Future<Optional<Map<String, Resource>>> scanResourceSource(final URL resourceUrl) {
+  protected Future<Map<String, Resource>> scanResourceSource(final URL resourceUrl) {
     if (getParallelism() == Parallelism.CONCURRENT) {
       return supplyAsync(() ->
                            getResourceResolver()
@@ -124,7 +121,7 @@ public class ResourceScannerImpl
       );
     }
 
-    Optional<Map<String, Resource>> resolved = getResourceResolver()
+    Map<String, Resource> resolved = getResourceResolver()
       .resolve(resourceUrl, getResourceFilter(), getResourceTypeSelector());
     return CompletableFuture.completedFuture(resolved);
   }

@@ -9,8 +9,10 @@ import net.andreho.resources.abstr.AbstractResourceResolver;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.jar.JarEntry;
@@ -31,9 +33,9 @@ public class JarResourceResolverImpl extends AbstractResourceResolver {
   private static final String JAR_PROTOCOL_NAME = "jar";
 
   @Override
-  public Optional<Map<String, Resource>> resolve(final URL url,
-                                                 final ResourceFilter nameFilter,
-                                                 final ResourceTypeSelector selector) {
+  public Map<String, Resource> resolve(final URL url,
+                                       final ResourceFilter nameFilter,
+                                       final ResourceTypeSelector selector) {
 
     if (JAR_PROTOCOL_NAME.equalsIgnoreCase(url.getProtocol())) {
       final Matcher matcher = JAR_PATTERN.matcher(url.toString());
@@ -42,27 +44,22 @@ public class JarResourceResolverImpl extends AbstractResourceResolver {
         throw new IllegalStateException("Unable to process a JAR file at the given URL: " + url);
       }
 
-      try {
-        final File jar = new File(matcher.group(1));
-        return scan(url, jar, nameFilter, selector);
-      } catch (IOException e) {
-        throw new IllegalStateException("Unable to process directory, that is referenced by: " + url, e);
-      }
+      final File jar = new File(matcher.group(1));
+      return scan(url, jar, nameFilter, selector);
     }
-    return Optional.empty();
+    return Collections.emptyMap();
   }
 
-  protected Optional<Map<String, Resource>> scan(final URL url,
-                                                 final File jar,
-                                                 final ResourceFilter resourceFilter,
-                                                 final ResourceTypeSelector typeSelector)
-  throws IOException {
+  protected Map<String, Resource> scan(final URL url,
+                                       final File jar,
+                                       final ResourceFilter resourceFilter,
+                                       final ResourceTypeSelector typeSelector) {
 
     if (!jar.exists()) {
-      return Optional.empty();
+      return Collections.emptyMap();
     }
 
-    final Map<String, Resource> result = new HashMap<>();
+    final Map<String, Resource> result = new LinkedHashMap<>();
 
     try (final JarFile jarFile = new JarFile(jar)) {
       for (Enumeration<JarEntry> enumeration = jarFile.entries(); enumeration.hasMoreElements(); ) {
@@ -70,6 +67,7 @@ public class JarResourceResolverImpl extends AbstractResourceResolver {
 
         if (!jarEntry.isDirectory()) {
           String resourceName = jarEntry.getName();
+
           if (filterResource(jarFile, jarEntry, resourceName, resourceFilter)) {
             result.put(resourceName, createResource(url, resourceName, jar, typeSelector, jarEntry.getSize()));
           }
@@ -82,7 +80,7 @@ public class JarResourceResolverImpl extends AbstractResourceResolver {
     } catch (IOException e) {
       throw new IllegalStateException("Unable to open/read/close the given jar file: " + jar.getAbsolutePath(), e);
     }
-    return Optional.of(result);
+    return Collections.unmodifiableMap(result);
   }
 
   private boolean filterResource(final JarFile jarFile,
@@ -102,6 +100,7 @@ public class JarResourceResolverImpl extends AbstractResourceResolver {
                                     final File jar,
                                     final ResourceTypeSelector selector,
                                     final long length) {
+
     final ResourceType resourceType = selector.select(resourceName);
     return new JarEntryResourceImpl(url, resourceName, resourceType, jar, length);
   }

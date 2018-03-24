@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Created by a.hofmann on 13.05.2016.
@@ -34,16 +33,12 @@ public class ResourceResolverPipelineImpl implements ResourceResolver {
   }
 
   @Override
-  public Optional<Map<String, Resource>> resolve(final URL url,
-                                                 final ResourceFilter nameFilter,
-                                                 final ResourceTypeSelector selector) {
+  public Map<String, Resource> resolve(final URL url,
+                                       final ResourceFilter nameFilter,
+                                       final ResourceTypeSelector selector) {
     for (ResourceResolver resourceResolver : this.resourceResolvers) {
-      Optional<Map<String, Resource>> resourceOptional = resourceResolver.resolve(url, nameFilter, selector);
-
-      if (resourceOptional.isPresent()) {
-        return resourceOptional;
-      }
+      return Collections.unmodifiableMap(resourceResolver.resolve(url, nameFilter, selector));
     }
-    return Optional.empty();
+    return Collections.emptyMap();
   }
 }

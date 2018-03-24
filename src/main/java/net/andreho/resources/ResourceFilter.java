@@ -11,6 +11,7 @@ public interface ResourceFilter {
 
   /**
    * @param resourceName of the actual resource
+   * @param streamSupplier of the actual resource
    * @return <b>true</b> if given resource should be collected or <b>false</b> otherwise.
    * @implNote the supplied stream is closed automatically after this method
    */

@@ -8,14 +8,14 @@ import java.util.regex.Pattern;
 /**
  * Created by a.hofmann on 09.05.2016.
  */
-public class PatternResourceTypeImpl
-    extends AbstractResourceType {
+public class PatternResourceTypeImpl extends AbstractResourceType {
 
   private final Pattern[] patterns;
 
-  public PatternResourceTypeImpl(String name,
-                                 String... patterns) {
+  public PatternResourceTypeImpl(final String name,
+                                 final String... patterns) {
     super(name);
+
     if(patterns == null || patterns.length == 0) {
       throw new IllegalArgumentException("Invalid patterns' array.");
     }

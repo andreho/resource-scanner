@@ -47,7 +47,7 @@ public interface ResourceScanner {
    * @param classLoader to use for scanning
    * @return a map where keys are fully qualified resource names and values are their representatives
    */
-  Map<String, Resource> scan(ClassLoader classLoader)
+  Map<String, Resource> scan(final ClassLoader classLoader)
   throws IOException, URISyntaxException, ExecutionException, InterruptedException;
 
   /**
@@ -73,11 +73,11 @@ public interface ResourceScanner {
    * @param types         to use
    * @return a resource scanner ready for use.
    */
-  static ResourceScanner newScanner(Parallelism parallelism,
-                                    ResourceSourceLocator sourceLocator,
-                                    ResourceResolver resolver,
-                                    ResourceFilter filter,
-                                    ResourceType... types) {
+  static ResourceScanner newResourceScanner(final Parallelism parallelism,
+                                            final ResourceSourceLocator sourceLocator,
+                                            final ResourceResolver resolver,
+                                            final ResourceFilter filter,
+                                            final ResourceType... types) {
     return new ResourceScannerImpl(parallelism, sourceLocator, resolver, filter, types);
   }
 
@@ -91,11 +91,11 @@ public interface ResourceScanner {
    * @param typeSelector  to use
    * @return a resource scanner ready for use.
    */
-  static ResourceScanner newScanner(Parallelism parallelism,
-                                    ResourceSourceLocator sourceLocator,
-                                    ResourceResolver resolver,
-                                    ResourceFilter filter,
-                                    ResourceTypeSelector typeSelector) {
+  static ResourceScanner newResourceScanner(final Parallelism parallelism,
+                                            final ResourceSourceLocator sourceLocator,
+                                            final ResourceResolver resolver,
+                                            final ResourceFilter filter,
+                                            final ResourceTypeSelector typeSelector) {
     return new ResourceScannerImpl(parallelism, sourceLocator, resolver, filter, typeSelector);
   }
 }

@@ -7,12 +7,11 @@ import java.util.Objects;
 /**
  * Created by a.hofmann on 09.05.2016.
  */
-public abstract class AbstractResourceType
-    implements ResourceType {
+public abstract class AbstractResourceType implements ResourceType {
 
   private final String name;
 
-  public AbstractResourceType(String name) {
+  public AbstractResourceType(final String name) {
     this.name = Objects.requireNonNull(name, "name");
   }
 

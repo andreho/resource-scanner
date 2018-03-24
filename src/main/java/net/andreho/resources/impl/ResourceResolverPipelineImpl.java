@@ -17,15 +17,15 @@ import java.util.Optional;
 /**
  * Created by a.hofmann on 13.05.2016.
  */
-public class ResourceResolverPipelineImpl
-    implements ResourceResolver {
+public class ResourceResolverPipelineImpl implements ResourceResolver {
+
   private final Collection<ResourceResolver> resourceResolvers;
 
-  public ResourceResolverPipelineImpl(ResourceResolver... resourceResolvers) {
+  public ResourceResolverPipelineImpl(final ResourceResolver... resourceResolvers) {
     this(Arrays.asList(resourceResolvers));
   }
 
-  public ResourceResolverPipelineImpl(Collection<ResourceResolver> resourceResolvers) {
+  public ResourceResolverPipelineImpl(final Collection<ResourceResolver> resourceResolvers) {
     this.resourceResolvers = new ArrayList<>(Objects.requireNonNull(resourceResolvers));
   }
 
@@ -38,8 +38,7 @@ public class ResourceResolverPipelineImpl
                                                  final ResourceFilter nameFilter,
                                                  final ResourceTypeSelector selector) {
     for (ResourceResolver resourceResolver : this.resourceResolvers) {
-      Optional<Map<String, Resource>> resourceOptional =
-          resourceResolver.resolve(url, nameFilter, selector);
+      Optional<Map<String, Resource>> resourceOptional = resourceResolver.resolve(url, nameFilter, selector);
 
       if (resourceOptional.isPresent()) {
         return resourceOptional;

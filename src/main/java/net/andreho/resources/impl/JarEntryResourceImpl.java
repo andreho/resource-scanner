@@ -14,30 +14,30 @@ import java.util.zip.ZipFile;
 /**
  * Created by a.hofmann on 09.05.2016.
  */
-public class JarEntryResourceImpl
-    extends AbstractByteArrayResource {
+public class JarEntryResourceImpl extends AbstractByteArrayResource {
 
   private final File jarFile;
   private final long length;
 
-  public JarEntryResourceImpl(URL source,
-                              String name,
-                              ResourceType resourceType,
-                              File jarFile,
-                              long length) {
+  public JarEntryResourceImpl(final URL source,
+                              final String name,
+                              final ResourceType resourceType,
+                              final File jarFile,
+                              final long length) {
+
     super(source, name, resourceType);
     this.jarFile = Objects.requireNonNull(jarFile, "jarFile");
     this.length = length;
   }
 
   @Override
-  protected InputStream openInputStream()
-  throws IOException {
+  protected InputStream openInputStream() throws IOException {
+
     final ZipFile zipFile = new ZipFile(this.jarFile);
     final ZipEntry entry = zipFile.getEntry(getName());
 
     if (entry == null) {
-      throw new IllegalStateException("Resource isn't available anymore: " + this.jarFile + "/!" + getName());
+      throw new IllegalStateException("Resource's entry isn't available anymore: " + this.jarFile + "/!" + getName());
     }
 
     return zipFile.getInputStream(entry);

@@ -26,14 +26,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Created by a.hofmann on 20.05.2016.
  */
-public class ResourceScannerTest {
+class ResourceScannerTest {
+
   private static final String RESOURCE_PREFIX = "java/";
 
   @Test
   @DisplayName("All 4560 resources of Hibernate must be located")
-  public void selectResourcesOfHibernateFramework()
+  void selectResourcesOfHibernateFramework()
   throws Exception {
-    ResourceScanner resourceScanner = ResourceScanner.newScanner(
+    ResourceScanner resourceScanner = ResourceScanner.newResourceScanner(
       CONCURRENT,
       locatorsList(
         usingGivenClassLoader(),
@@ -45,25 +46,23 @@ public class ResourceScannerTest {
     );
 
     Map<String, Resource> result = resourceScanner.scan(getClass().getClassLoader());
-    assertEquals(4560, result.size(), "Not all resources were found: "+getClass().getClassLoader());
+    assertEquals(4560, result.size(), "Not all resources were found: " + getClass().getClassLoader());
   }
 
   @Test
   @Disabled
   @DisplayName("Resources must be located properly according to defined scanner's config")
-  public void resourcesAreLocatedProperly()
-  throws Exception {
+  void resourcesAreLocatedProperly() throws Exception {
     ResourceScanner resourceScanner = createResourceScanner();
     Map<String, Resource> result = resourceScanner.scan(getClass().getClassLoader());
     System.out.println("Count: " + result.size());
-    assertTrue(result.size() > 0, "No resource were found on: "+getClass().getClassLoader());
+    assertTrue(result.size() > 0, "No resource were found on: " + getClass().getClassLoader());
   }
 
   @Test
   @Disabled
   @DisplayName("Resources must be located properly according to defined scanner's config")
-  public void eachOfSelectedResourcesHasFetchableContent()
-  throws Exception {
+  void eachOfSelectedResourcesHasFetchableContent() throws Exception {
     ResourceScanner resourceScanner = createResourceScanner();
     Map<String, Resource> result = resourceScanner.scan(getClass().getClassLoader());
     long used = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
@@ -83,15 +82,15 @@ public class ResourceScannerTest {
   }
 
   private ResourceScanner createResourceScanner() {
-    return ResourceScanner.newScanner(
-        CONCURRENT,
-        locatorsList(
-            ClassLoaderResourceLocatorImpl.INSTANCE,
-            ClassPathResourceLocatorImpl.INSTANCE
-        ),
-        resolversList(new FileResourceResolverImpl(), new JarResourceResolverImpl()),
-        (resourceName, streamSupplier) ->
-          resourceName.startsWith(RESOURCE_PREFIX),
-        ResourceType.CLASS_TYPE);
+    return ResourceScanner.newResourceScanner(
+      CONCURRENT,
+      locatorsList(
+        ClassLoaderResourceLocatorImpl.INSTANCE,
+        ClassPathResourceLocatorImpl.INSTANCE
+      ),
+      resolversList(new FileResourceResolverImpl(), new JarResourceResolverImpl()),
+      (resourceName, streamSupplier) ->
+        resourceName.startsWith(RESOURCE_PREFIX),
+      ResourceType.CLASS_TYPE);
   }
 }

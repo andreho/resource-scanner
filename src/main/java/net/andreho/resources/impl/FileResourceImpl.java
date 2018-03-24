@@ -14,29 +14,27 @@ import java.util.Optional;
 /**
  * Created by a.hofmann on 09.05.2016.
  */
-public class FileResourceImpl
-    extends AbstractByteArrayResource {
+public class FileResourceImpl extends AbstractByteArrayResource {
 
   private final File file;
 
-  public FileResourceImpl(URL source,
-                          String name,
-                          ResourceType resourceType,
-                          File file) {
+  public FileResourceImpl(final URL source,
+                          final String name,
+                          final ResourceType resourceType,
+                          final File file) {
+
     super(source, name, resourceType);
     this.file = Objects.requireNonNull(file, "file");
-    assert file.exists() : "File doesn't exist.";
+    assert file.exists() : "Given file doesn't exist.";
   }
 
   @Override
-  protected FileInputStream openInputStream()
-  throws IOException {
+  protected FileInputStream openInputStream() throws IOException {
     return new FileInputStream(this.file);
   }
 
   @Override
-  protected Optional<ReadableByteChannel> openReadableByteChannel()
-  throws IOException {
+  protected Optional<ReadableByteChannel> openReadableByteChannel() throws IOException {
     return Optional.of(openInputStream().getChannel());
   }
 

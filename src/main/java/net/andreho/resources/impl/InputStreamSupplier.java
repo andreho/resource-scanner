@@ -3,22 +3,21 @@ package net.andreho.resources.impl;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 /**
  * <br/>Created by a.hofmann on 16.06.2017 at 03:20.
  */
-public final class InputStreamSupplier
-    implements Supplier<InputStream>,
-               Closeable {
+public final class InputStreamSupplier implements Supplier<InputStream>, Closeable {
 
   private final Callable<InputStream> inputStreamSupplier;
-  private volatile boolean closed;
   private volatile InputStream inputStream;
+  private volatile boolean closed;
 
   public InputStreamSupplier(final Callable<InputStream> inputStreamSupplier) {
-    this.inputStreamSupplier = inputStreamSupplier;
+    this.inputStreamSupplier = Objects.requireNonNull(inputStreamSupplier);
   }
 
   @Override

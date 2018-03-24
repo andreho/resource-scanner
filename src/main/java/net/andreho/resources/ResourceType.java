@@ -22,7 +22,7 @@ public interface ResourceType {
 
   ResourceType JSON_TYPE = newTypeByPatterns("*.json", ".*\\.(?i)json");
 
-  ResourceType YAML_TYPE = newTypeByPatterns("*.yml", ".*\\.(?i)yml");
+  ResourceType YAML_TYPE = newTypeByPatterns("*.yml", ".*\\.(?i)ya?ml");
 
   ResourceType SQL_TYPE = newTypeByPatterns("*.sql", ".*\\.(?i)sql");
 
@@ -49,7 +49,7 @@ public interface ResourceType {
    * @param patterns
    * @return
    */
-  static ResourceType newTypeByPatterns(String name, String ... patterns) {
+  static ResourceType newTypeByPatterns(final String name, final String ... patterns) {
     return new PatternResourceTypeImpl(name, patterns);
   }
 
@@ -58,7 +58,7 @@ public interface ResourceType {
    * @param delegate
    * @return
    */
-  static ResourceType newTypeByDelegate(String name, Function<String, Boolean> delegate) {
+  static ResourceType newTypeByDelegate(final String name, final Function<String, Boolean> delegate) {
     return new DelegatingResourceTypeImpl(name, delegate);
   }
 }

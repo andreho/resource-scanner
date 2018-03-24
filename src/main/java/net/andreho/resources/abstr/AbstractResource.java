@@ -16,11 +16,8 @@ import java.util.Optional;
 /**
  * Created by a.hofmann on 09.05.2016.
  */
-public abstract class AbstractResource<T>
-    implements Resource {
+public abstract class AbstractResource implements Resource {
 
-  private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
-  static final int TEMP_BUFFER_CAPACITY = 256;
   private final URL source;
   private final String name;
   private final ResourceType resourceType;
@@ -39,8 +36,7 @@ public abstract class AbstractResource<T>
 
   @Override
   public Optional<Resource> getNext() {
-    final Resource next = this.next;
-    return next == null? Optional.empty() : Optional.of(next);
+    return Optional.ofNullable(next);
   }
 
   @Override
@@ -54,8 +50,7 @@ public abstract class AbstractResource<T>
   }
 
   @Override
-  public boolean cache()
-  throws IOException {
+  public boolean cache() throws IOException {
     return false;
   }
 
@@ -65,9 +60,9 @@ public abstract class AbstractResource<T>
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public <V> Optional<V> getAttachment() {
-    final Object attachment = this.attachment;
-    return attachment == null? Optional.empty() : Optional.of((V) attachment);
+    return Optional.ofNullable((V) attachment);
   }
 
   @Override
@@ -81,8 +76,7 @@ public abstract class AbstractResource<T>
   }
 
   @Override
-  public Resource evict()
-  throws IOException {
+  public Resource evict() throws IOException {
     this.cachedReference = null;
     return this;
   }
@@ -99,14 +93,12 @@ public abstract class AbstractResource<T>
   }
 
   @Override
-  public Optional<ReadableByteChannel> getReadableByteChannel()
-  throws IOException {
+  public Optional<ReadableByteChannel> getReadableByteChannel() throws IOException {
     return openReadableByteChannel();
   }
 
   @Override
-  public InputStream getInputStream()
-  throws IOException {
+  public InputStream getInputStream() throws IOException {
     return openInputStream();
   }
 
@@ -142,14 +134,18 @@ public abstract class AbstractResource<T>
     };
   }
 
+  @Override
+  public String toString() {
+    return getName();
+  }
+
   /**
    * Used to open an instance of {@link ReadableByteChannel}
    *
    * @return an instance (not null)
    * @throws IOException
    */
-  protected Optional<ReadableByteChannel> openReadableByteChannel()
-  throws IOException {
+  protected Optional<ReadableByteChannel> openReadableByteChannel() throws IOException {
     return Optional.empty();
   }
 
@@ -159,11 +155,6 @@ public abstract class AbstractResource<T>
    * @return an opened stream that <u>must</u> be closed by user again.
    * @throws IOException
    */
-  protected abstract InputStream openInputStream()
-  throws IOException;
+  protected abstract InputStream openInputStream() throws IOException;
 
-  @Override
-  public String toString() {
-    return getName();
-  }
 }

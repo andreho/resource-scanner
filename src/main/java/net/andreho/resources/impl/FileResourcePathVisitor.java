@@ -15,16 +15,15 @@ import java.util.Map;
 /**
  * <br/>Created by a.hofmann on 17.06.2017 at 04:27.
  */
-class FileResourcePathVisitor
-    implements FileVisitor<Path> {
+class FileResourcePathVisitor implements FileVisitor<Path> {
 
-  private FileResourceResolverImpl fileResourceResolver;
   private final URL url;
   private final Path target;
   private final ResourceFilter resourceFilter;
   private final ResourceTypeSelector selector;
   private final Map<String, Resource> result;
   private final StringBuilder stack;
+  private final FileResourceResolverImpl fileResourceResolver;
 
   public FileResourcePathVisitor(final FileResourceResolverImpl fileResourceResolver,
                                  final URL url,
@@ -32,6 +31,7 @@ class FileResourcePathVisitor
                                  final ResourceFilter resourceFilter,
                                  final ResourceTypeSelector selector,
                                  final Map<String, Resource> result) {
+
     this.fileResourceResolver = fileResourceResolver;
     this.target = target;
     this.resourceFilter = resourceFilter;
@@ -42,9 +42,7 @@ class FileResourcePathVisitor
   }
 
   @Override
-  public FileVisitResult preVisitDirectory(Path dir,
-                                           BasicFileAttributes attrs)
-  throws IOException {
+  public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
     if (!target.equals(dir)) {
       stack.append(dir.getFileName().toString()).append('/');
     }
@@ -52,9 +50,7 @@ class FileResourcePathVisitor
   }
 
   @Override
-  public FileVisitResult postVisitDirectory(Path dir,
-                                            IOException exc)
-  throws IOException {
+  public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
     if (!target.equals(dir)) {
       stack.setLength(stack.length() - (dir.getFileName().toString().length() + 1));
     }
@@ -62,9 +58,7 @@ class FileResourcePathVisitor
   }
 
   @Override
-  public FileVisitResult visitFile(Path file,
-                                   BasicFileAttributes attrs)
-  throws IOException {
+  public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
     final String fileName = file.getFileName().toString();
     final StringBuilder stack = this.stack;
 
@@ -80,9 +74,7 @@ class FileResourcePathVisitor
   }
 
   @Override
-  public FileVisitResult visitFileFailed(Path file,
-                                         IOException exc)
-  throws IOException {
+  public FileVisitResult visitFileFailed(final Path file, final IOException exc) throws IOException {
     throw exc;
   }
 }

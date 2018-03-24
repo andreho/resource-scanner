@@ -17,20 +17,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static net.andreho.resources.impl.Utils.mergeResults;
 
 /**
  * Created by a.hofmann on 10.05.2016.
  */
 public class ResourceScannerImpl
-    implements ResourceScanner {
+  implements ResourceScanner {
 
   private final Parallelism parallelism;
   private final ResourceFilter resourceFilter;
@@ -38,11 +37,11 @@ public class ResourceScannerImpl
   private final ResourceTypeSelector resourceTypeSelector;
   private final ResourceResolver resourceResolver;
 
-  public ResourceScannerImpl(Parallelism parallelism,
-                             ResourceSourceLocator resourceSourceLocator,
-                             ResourceResolver resourceResolver,
-                             ResourceFilter resourceFilter,
-                             ResourceType... resourceTypes) {
+  public ResourceScannerImpl(final Parallelism parallelism,
+                             final ResourceSourceLocator resourceSourceLocator,
+                             final ResourceResolver resourceResolver,
+                             final ResourceFilter resourceFilter,
+                             final ResourceType... resourceTypes) {
     this(parallelism,
          resourceSourceLocator,
          resourceResolver,
@@ -51,11 +50,12 @@ public class ResourceScannerImpl
     );
   }
 
-  public ResourceScannerImpl(Parallelism parallelism,
-                             ResourceSourceLocator resourceSourceLocator,
-                             ResourceResolver resourceResolver,
-                             ResourceFilter resourceFilter,
-                             ResourceTypeSelector resourceTypeSelector) {
+  public ResourceScannerImpl(final Parallelism parallelism,
+                             final ResourceSourceLocator resourceSourceLocator,
+                             final ResourceResolver resourceResolver,
+                             final ResourceFilter resourceFilter,
+                             final ResourceTypeSelector resourceTypeSelector) {
+
     this.parallelism = Objects.requireNonNull(parallelism, "Parallelism can't be null.");
     this.resourceSourceLocator = Objects.requireNonNull(resourceSourceLocator, "resourceSourceLocator");
     this.resourceResolver = Objects.requireNonNull(resourceResolver, "resourceResolver");
@@ -79,13 +79,13 @@ public class ResourceScannerImpl
   }
 
   @Override
-  public ResourceTypeSelector getResourceTypeSelector() {
-    return resourceTypeSelector;
+  public ResourceFilter getResourceFilter() {
+    return resourceFilter;
   }
 
   @Override
-  public ResourceFilter getResourceFilter() {
-    return resourceFilter;
+  public ResourceTypeSelector getResourceTypeSelector() {
+    return resourceTypeSelector;
   }
 
   @Override
@@ -100,12 +100,13 @@ public class ResourceScannerImpl
 
   protected Map<String, Resource> scanResourceSources(final Collection<URL> resourceSources)
   throws URISyntaxException, IOException, ExecutionException, InterruptedException {
-    final Map<String, Resource> resultMap = createResultMap();
     final List<Future<Optional<Map<String, Resource>>>> pendingList = new ArrayList<>(resourceSources.size());
 
     for (URL url : resourceSources) {
       pendingList.add(scanResourceSource(url));
     }
+
+    final Map<String, Resource> resultMap = createResultMap();
 
     for (Future<Optional<Map<String, Resource>>> future : pendingList) {
       final Optional<Map<String, Resource>> optional = future.get();
@@ -116,15 +117,15 @@ public class ResourceScannerImpl
   }
 
   protected Future<Optional<Map<String, Resource>>> scanResourceSource(final URL resourceUrl) {
-    if(getParallelism() == Parallelism.CONCURRENT) {
-      return ForkJoinPool.commonPool().submit(
-          () -> getResourceResolver()
-              .resolve(resourceUrl, getResourceFilter(), getResourceTypeSelector())
+    if (getParallelism() == Parallelism.CONCURRENT) {
+      return supplyAsync(() ->
+                           getResourceResolver()
+                             .resolve(resourceUrl, getResourceFilter(), getResourceTypeSelector())
       );
     }
 
     Optional<Map<String, Resource>> resolved = getResourceResolver()
-        .resolve(resourceUrl, getResourceFilter(), getResourceTypeSelector());
+      .resolve(resourceUrl, getResourceFilter(), getResourceTypeSelector());
     return CompletableFuture.completedFuture(resolved);
   }
 }

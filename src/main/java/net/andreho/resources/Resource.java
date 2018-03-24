@@ -23,22 +23,22 @@ public interface Resource
   void setAttachment(final Object attachment);
 
   /**
-   * @return
+   * @return the next resource that was associated with this resource
    */
   Optional<Resource> getNext();
 
   /**
-   * @param resource
+   * @param resource is the next resource instance
    */
   void setNext(Resource resource);
 
   /**
-   * @return
+   * @return <b>true</b> if there is the next resource
    */
   boolean hasNext();
 
   /**
-   * @return
+   * @return URL of the referenced resource
    */
   URL getSource();
 

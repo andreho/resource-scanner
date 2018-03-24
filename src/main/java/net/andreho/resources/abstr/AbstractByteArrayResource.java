@@ -17,8 +17,9 @@ public abstract class AbstractByteArrayResource
     extends AbstractResource<byte[]> {
 
   private static final int MAX_CACHEABLE_BYTES = Integer.MAX_VALUE - 8;
-  static final int READ_BUFFER_LENGTH = 2048;
-  private final Object lock = new Object();
+  private static final int READ_BUFFER_LENGTH = 2048;
+
+  private final Object mutex = new Object();
 
   public AbstractByteArrayResource(final URL source,
                                    final String name,
@@ -27,8 +28,7 @@ public abstract class AbstractByteArrayResource
   }
 
   @Override
-  public final InputStream getInputStream()
-  throws IOException {
+  public final InputStream getInputStream() throws IOException {
     if (isCached()) {
       final Reference<byte[]> cachedReference = this.cachedReference;
       final byte[] content = cachedReference.get();
@@ -40,8 +40,7 @@ public abstract class AbstractByteArrayResource
     return openInputStream();
   }
 
-  protected byte[] readContentWithLength()
-  throws IOException {
+  protected byte[] readContentWithLength() throws IOException {
     if(length() >= MAX_CACHEABLE_BYTES) {
       throw new IllegalStateException("Not cacheable resource, because of length constraints: "+length());
     }
@@ -59,8 +58,7 @@ public abstract class AbstractByteArrayResource
     return result;
   }
 
-  protected byte[] readContentWithOutLength()
-  throws IOException {
+  protected byte[] readContentWithoutLength() throws IOException {
     final byte[] result;
     try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
       try (final InputStream inputStream = getInputStream()) {
@@ -77,16 +75,15 @@ public abstract class AbstractByteArrayResource
   }
 
   @Override
-  public boolean cache()
-  throws IOException {
+  public boolean cache() throws IOException {
     if (!isCached()) {
-      synchronized (this.lock) {
+      synchronized (this.mutex) {
         if (!isCached()) {
           byte[] result;
           if (hasLength()) {
             result = readContentWithLength();
           } else {
-            result = readContentWithOutLength();
+            result = readContentWithoutLength();
           }
           this.cachedReference = createCachedReference(result);
         }
@@ -112,6 +109,6 @@ public abstract class AbstractByteArrayResource
     if(hasLength()) {
       return readContentWithLength();
     }
-    return readContentWithOutLength();
+    return readContentWithoutLength();
   }
 }

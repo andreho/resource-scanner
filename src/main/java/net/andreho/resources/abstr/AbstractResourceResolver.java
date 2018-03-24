@@ -4,6 +4,7 @@ import net.andreho.resources.Resource;
 import net.andreho.resources.ResourceFilter;
 import net.andreho.resources.ResourceResolver;
 import net.andreho.resources.ResourceTypeSelector;
+import net.andreho.resources.impl.Utils;
 
 import java.io.File;
 import java.net.URL;
@@ -18,10 +19,8 @@ import java.util.jar.JarFile;
 public abstract class AbstractResourceResolver
     implements ResourceResolver {
 
-
-  protected boolean isSubJar(final URL url,
-                             final String resourceName) {
-    return resourceName.endsWith(".jar");
+  protected boolean isSubJar(final URL url, final String resourceName) {
+    return Utils.endsWithCaseInsensitive(resourceName, ".jar");
   }
 
   protected Map<String, Resource> scanSubJar(final URL url,

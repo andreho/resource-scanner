@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,8 +23,7 @@ import static net.andreho.resources.impl.Utils.mergeResults;
 /**
  * Created by a.hofmann on 13.05.2016.
  */
-public class FileResourceResolverImpl
-    extends AbstractResourceResolver {
+public class FileResourceResolverImpl extends AbstractResourceResolver {
 
   private static final String FILE_PROTOCOL_NAME = "file";
 
@@ -31,18 +31,19 @@ public class FileResourceResolverImpl
   public Optional<Map<String, Resource>> resolve(final URL url,
                                                  final ResourceFilter resourceFilter,
                                                  final ResourceTypeSelector typeSelector) {
-    if (FILE_PROTOCOL_NAME.equalsIgnoreCase(url.getProtocol())) {
-      try {
-        final File directory = new File(url.toURI());
-        return scan(url, directory, resourceFilter, typeSelector);
-      } catch (URISyntaxException e) {
-        throw new IllegalStateException("Unable to resolve given URL: " + url, e);
-      } catch (IOException e) {
-        throw new IllegalStateException("Unable to process directory, that is referenced by: " + url, e);
-      }
+
+    if (!FILE_PROTOCOL_NAME.equalsIgnoreCase(url.getProtocol())) {
+      return Optional.empty();
     }
 
-    return Optional.empty();
+    try {
+      final File directory = new File(url.toURI());
+      return scan(url, directory, resourceFilter, typeSelector);
+    } catch (URISyntaxException e) {
+      throw new IllegalStateException("Unable to resolve given URL: " + url, e);
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to process directory, that is referenced by: " + url, e);
+    }
   }
 
   protected Optional<Map<String, Resource>> scan(final URL url,
@@ -55,10 +56,11 @@ public class FileResourceResolverImpl
     }
 
     final Path targetPath = file.toPath();
-    final Map<String, Resource> result = new HashMap<>();
+    final Map<String, Resource> result = new LinkedHashMap<>();
+
     Files.walkFileTree(targetPath,
-                       new FileResourcePathVisitor(this, url, targetPath, resourceFilter, typeSelector, result)
-    );
+                       new FileResourcePathVisitor(
+                         this, url, targetPath, resourceFilter, typeSelector, result));
 
     if(isSubJar(url, file.getName())) {
       mergeResults(result, scanSubJar(url, file, resourceFilter, typeSelector));
@@ -72,7 +74,8 @@ public class FileResourceResolverImpl
                                final ResourceFilter resourceFilter) {
 
     try (final InputStreamSupplier streamSupplier =
-             new InputStreamSupplier(() -> Files.newInputStream(file, StandardOpenOption.READ))) {
+           new InputStreamSupplier(() -> Files.newInputStream(file, StandardOpenOption.READ))) {
+
       return resourceFilter.filter(resourceName, streamSupplier);
     } catch (IOException e) {
       throw new IllegalStateException(e);

@@ -23,11 +23,11 @@ import static net.andreho.resources.impl.Utils.mergeResults;
 /**
  * Created by a.hofmann on 13.05.2016.
  */
-public class JarResourceResolverImpl
-    extends AbstractResourceResolver {
+public class JarResourceResolverImpl extends AbstractResourceResolver {
 
   private static final Pattern JAR_PATTERN =
-      Pattern.compile("(?:jar:file:[/\\\\])?(.*\\.jar)(?:[!/]*)?", Pattern.CASE_INSENSITIVE);
+    Pattern.compile("(?:jar:file:[/\\\\])?(.*\\.jar)(?:[!/]*)?", Pattern.CASE_INSENSITIVE);
+
   private static final String JAR_PROTOCOL_NAME = "jar";
 
   @Override
@@ -57,6 +57,7 @@ public class JarResourceResolverImpl
                                                  final ResourceFilter resourceFilter,
                                                  final ResourceTypeSelector typeSelector)
   throws IOException {
+
     if (!jar.exists()) {
       return Optional.empty();
     }

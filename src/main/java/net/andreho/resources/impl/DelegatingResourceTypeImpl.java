@@ -12,12 +12,11 @@ import static java.lang.Boolean.TRUE;
 /**
  * Created by a.hofmann on 09.05.2016.
  */
-public class DelegatingResourceTypeImpl
-    extends AbstractResourceType {
+public class DelegatingResourceTypeImpl extends AbstractResourceType {
+
   private final Function<String, Boolean> delegate;
 
-  public DelegatingResourceTypeImpl(String name,
-                                    Function<String, Boolean> delegate) {
+  public DelegatingResourceTypeImpl(final String name, final Function<String, Boolean> delegate) {
     super(name);
     this.delegate = Objects.requireNonNull(delegate, "Given delegate is null.");
   }

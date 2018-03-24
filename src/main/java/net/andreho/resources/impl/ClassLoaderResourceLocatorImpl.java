@@ -11,8 +11,7 @@ import java.util.LinkedHashSet;
 /**
  * Created by a.hofmann on 13.05.2016.
  */
-public class ClassLoaderResourceLocatorImpl
-    implements ResourceSourceLocator {
+public class ClassLoaderResourceLocatorImpl implements ResourceSourceLocator {
 
   public static final ResourceSourceLocator INSTANCE = new ClassLoaderResourceLocatorImpl();
 
@@ -21,8 +20,7 @@ public class ClassLoaderResourceLocatorImpl
     final Collection<URL> result = new LinkedHashSet<>();
     try {
       for (final Enumeration<URL> resources = classLoader.getResources(""); resources.hasMoreElements(); ) {
-        URL url = resources.nextElement();
-        result.add(url);
+        result.add(resources.nextElement());
       }
     } catch (IOException e) {
       throw new IllegalStateException("Unable to fetch resources from given class-loader:" + classLoader, e);

@@ -29,17 +29,17 @@ public class ClassPathResourceLocatorImpl
     return result;
   }
 
-  protected URL classPathFileAsUrl(String file) {
+  protected URL classPathFileAsUrl(final String file) {
     URL url;
-    file = file.replace(File.separatorChar, '/');
+    String urlFile = file.replace(File.separatorChar, '/');
     try {
-      if (endsWithCaseInsensitive(file, ".jar")) {
-        url = new URL("jar", "", "file:/" + file);
+      if (endsWithCaseInsensitive(urlFile, ".jar")) {
+        url = new URL("jar", "", "file:/" + urlFile);
       } else {
-        if (new File(file).isDirectory() && !file.endsWith("/")) {
-          file += "/";
+        if (new File(urlFile).isDirectory() && !urlFile.endsWith("/")) {
+          urlFile += "/";
         }
-        url = new URL("file", "", "/" + file);
+        url = new URL("file", "", "/" + urlFile);
       }
     } catch (MalformedURLException e) {
       throw new IllegalStateException("Unable to transform given file to an URL: " + file, e);
